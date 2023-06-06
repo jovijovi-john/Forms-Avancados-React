@@ -3,6 +3,15 @@ import "./styles/global.css";
 
 import { useForm } from "react-hook-form";
 
+/*
+ *
+ * [] Validação / Transformação
+ * [] Field Arrays
+ * [] Upload de arquivos
+ * [] Composition Pattern
+ *
+ */
+
 export default function App() {
   const [output, setOutput] = useState("");
   const { register, handleSubmit } = useForm();
