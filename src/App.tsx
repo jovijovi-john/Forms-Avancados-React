@@ -69,7 +69,7 @@ export default function App() {
     name: "techs",
   });
 
-  function createUser(data: unknown) {
+  function createUser(data: CreateUserFormData) {
     setOutput(JSON.stringify(data, null, 2));
     return {};
   }
