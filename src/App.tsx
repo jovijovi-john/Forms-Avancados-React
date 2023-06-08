@@ -44,7 +44,10 @@ const createUserFormSchema = z.object({
         knowledge: z.coerce.number().min(1).max(100),
       })
     )
-    .min(2, "Insira pelo menos 2 tecnologias"),
+    .min(2, "Insira pelo menos 2 tecnologias")
+    .refine((techs) => {
+      return techs.some((tech) => tech.knowledge > 50);
+    }, "Você está aprendendo"),
 });
 
 type CreateUserFormData = z.infer<typeof createUserFormSchema>;
