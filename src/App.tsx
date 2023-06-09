@@ -4,6 +4,7 @@ import "./styles/global.css";
 import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { supabase } from "./lib/supabase";
 
 /*
  * [x] Validação / Transformação
@@ -13,6 +14,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
  */
 
 const createUserFormSchema = z.object({
+  avatar: z
+    .instanceof(FileList)
+    .transform((list) => list.item(0)!)
+    .refine(
+      (file) => file!.size <= 4 * 1024 * 1024,
+      "O arquivo deve ter no máximo 5mb"
+    ),
   name: z
     .string()
     .nonempty("O nome é obrigatório")
@@ -72,9 +80,15 @@ export default function App() {
     name: "techs",
   });
 
-  function createUser(data: CreateUserFormData) {
+  async function createUser(data: CreateUserFormData) {
+    // esse console é pra mostrar o avatar, pq o tipo File nao tem uma definição do toString
+    console.log(data.avatar);
+
+    await supabase.storage
+      .from("forms-react-bucket")
+      .upload(data.avatar?.name, data.avatar);
+
     setOutput(JSON.stringify(data, null, 2));
-    return {};
   }
 
   function addNewTech() {
@@ -87,6 +101,19 @@ export default function App() {
         className="flex flex-col gap-y-4 w-full max-w-sm"
         onSubmit={handleSubmit(createUser)}
       >
+        {/* avatar */}
+        <div className="flex flex-col gap-y-1">
+          <label htmlFor="name">Avatar</label>
+          <input type="file" accept="image/*" {...register("avatar")} />
+
+          {errors.avatar && (
+            <span className="text-red-500 text-sm">
+              {errors.avatar.message}
+            </span>
+          )}
+        </div>
+
+        {/* Nome */}
         <div className="flex flex-col gap-y-1">
           <label htmlFor="name">Nome</label>
           <input
@@ -100,6 +127,7 @@ export default function App() {
           )}
         </div>
 
+        {/* E-mail */}
         <div className="flex flex-col gap-y-1">
           <label htmlFor="email">E-mail</label>
           <input
@@ -113,6 +141,7 @@ export default function App() {
           )}
         </div>
 
+        {/* Senha */}
         <div className="flex flex-col gap-y-1">
           <label htmlFor="password">Senha</label>
           <input
@@ -127,6 +156,7 @@ export default function App() {
           )}
         </div>
 
+        {/* Techs */}
         <div className="flex flex-col gap-y-1">
           <label
             htmlFor="password"
@@ -173,6 +203,7 @@ export default function App() {
           )}
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
           className="bg-emerald-500 font-semibold text-white h-10 hover:bg-emerald-600"

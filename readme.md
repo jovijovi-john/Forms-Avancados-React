@@ -6,6 +6,8 @@ Libs usadas:
 - zod
 - @hookform/resolvers (para integrar o RHF com o zod)
 - -D tailwindcss postcss autoprefixer
+- @supabase/supabase-js
+  sdk do supabase
 
 Comandos:
 
